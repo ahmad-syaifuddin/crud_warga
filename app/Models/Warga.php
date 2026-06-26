@@ -15,5 +15,6 @@ class Warga extends Model
         'jenis_kelamin',
         'alamat',
         'no_hp',
+        'foto',
     ];
 }

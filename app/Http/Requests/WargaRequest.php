@@ -30,6 +30,7 @@ class WargaRequest extends FormRequest
             'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'alamat' => 'required|string',
             'no_hp' => 'nullable|numeric',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 }

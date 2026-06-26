@@ -38,3 +38,25 @@
         value="{{ old('no_hp', $warga->no_hp ?? '') }}" />
     <x-input-error class="mt-2" :messages="$errors->get('no_hp')" />
 </div>
+
+<div class="mb-6">
+    <x-input-label for="foto" value="Foto Warga (Opsional)" class="mb-2" />
+    <div class="flex items-center gap-4">
+        @if (isset($warga) && $warga->foto)
+            <img src="{{ asset($warga->foto) }}" alt="Foto Warga"
+                class="w-16 h-16 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600">
+        @else
+            <div
+                class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-400 dark:border-gray-600">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        @endif
+
+        <div class="flex-1">
+            <input type="file" id="foto" name="foto" accept="image/*"
+                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 p-2">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">PNG, JPG, JPEG, GIF, WEBP (Max: 2MB).</p>
+        </div>
+    </div>
+    <x-input-error class="mt-2" :messages="$errors->get('foto')" />
+</div>

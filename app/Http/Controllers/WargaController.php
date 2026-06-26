@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WargaRequest;
 use App\Models\Warga;
+use Illuminate\Support\Facades\File;
 
 class WargaController extends Controller
 {
@@ -30,7 +31,19 @@ class WargaController extends Controller
      */
     public function store(WargaRequest $request)
     {
-        Warga::create($request->all());
+        $data = $request->validated();
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            // Buat nama file unik dengan timestamp
+            $nama_file = time().'_'.$file->getClientOriginalName();
+            // Pindahkan file langsung ke folder public/images/warga_foto
+            $file->move(public_path('images/warga_foto'), $nama_file);
+            // Simpan path-nya ke database
+            $data['foto'] = 'images/warga_foto/'.$nama_file;
+        }
+
+        Warga::create($data);
 
         return redirect()->route('warga.index')->with('success', 'Data Warga berhasil ditambahkan!');
     }
@@ -56,16 +69,32 @@ class WargaController extends Controller
      */
     public function update(WargaRequest $request, Warga $warga)
     {
-        $warga->update($request->all());
+        $data = $request->validated();
+
+        if ($request->hasFile('foto')) {
+            // Cek dan hapus foto lama di folder public jika ada
+            if ($warga->foto && File::exists(public_path($warga->foto))) {
+                File::delete(public_path($warga->foto));
+            }
+
+            $file = $request->file('foto');
+            $nama_file = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('images/warga_foto'), $nama_file);
+            $data['foto'] = 'images/warga_foto/'.$nama_file;
+        }
+
+        $warga->update($data);
 
         return redirect()->route('warga.index')->with('success', 'Data Warga berhasil diupdate!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Warga $warga)
     {
+        // Hapus file fisik foto di folder public
+        if ($warga->foto && File::exists(public_path($warga->foto))) {
+            File::delete(public_path($warga->foto));
+        }
+
         $warga->delete();
 
         return redirect()->route('warga.index')->with('success', 'Data Warga berhasil dihapus!');
